@@ -81,19 +81,3 @@ def denoiseInpaint(pathImagen,pathMask,multichannel):
     image_result = inpaint.inpaint_biharmonic(image_defect, mask, multichannel)
 
     return image_result
-
-#im_bregman_iso = denoiseTV_Bregman('ecografia/1_1.tif',False)
-#im_bregman_aniso = denoiseTV_Bregman('ecografia/1_1.tif',True)
-im_morp = filtroMorfologico('ecografia/1_1.tif',10)
-#cv2.imshow('denoise1',im_bregman_iso)
-#cv2.imshow('denoise2',im_bregman_aniso)
-im_orig = cv2.imread('ecografia/1_1.tif',0)
-cv2.imshow('Original',im_orig)
-cv2.imshow('Filtro morfologico',im_morp)
-cv2.imwrite('morp.tif',im_morp)
-
-im_nlmeans = denoiseNonLocalMeans('morp.tif')
-cv2.imshow('Non-local means',im_nlmeans)
-
-cv2.waitKey(0)
-cv2.destroyAllWindows()
