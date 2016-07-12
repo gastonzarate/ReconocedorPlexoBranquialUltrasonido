@@ -4,12 +4,21 @@ from skimage import img_as_float
 from skimage.restoration import denoise_nl_means,inpaint,denoise_tv_chambolle, denoise_bilateral,denoise_tv_bregman
 
 
-def filtroMorfologico(imagen,iterations=1):
+def denoiseDilate(imagen,iterations=1):
     # Crear un kernel de '1' de 3x3
     kernel = np.ones((3, 3), np.uint8)
 
     # Se aplica la transformacion: Morphological Gradient
     transformacion = cv2.dilate(imagen, kernel, iterations) - cv2.erode(imagen, kernel, iterations)
+
+    return transformacion
+
+def denoiseMorfologico(imagen):
+    # Crear un kernel de '1' de 3x3
+    kernel = np.ones((3, 3), np.uint8)
+
+    # Se aplica la transformacion: Morphological Gradient
+    transformacion = cv2.morphologyEx(imagen, cv2.MORPH_OPEN, kernel) + cv2.morphologyEx(imagen, cv2.MORPH_CLOSE, kernel)
 
     return transformacion
 

@@ -50,7 +50,7 @@ def draw_grid(im, grid_size):
     for j in range(0, im.shape[0], grid_size):
         cv2.line(im, (0, j), (im.shape[1], j), color=(255,))
 
-
+"""
 im = cv2.imread("train/1_1.tif", -1)
 im_mask = cv2.imread("train/1_1_mask.tif", -1)
 
@@ -69,3 +69,4 @@ im_mask_t = im_merge_t[...,1]
 cv2.imshow('image',im_t)
 cv2.imshow('mask',im_mask_t)
 cv2.waitKey(0)
+"""
