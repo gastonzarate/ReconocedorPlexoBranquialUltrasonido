@@ -58,11 +58,9 @@ def denoiseTV_Bregman(imagen,isotropic):
 
     return denoise
 
-def denoiseInpaint(pathImagen,pathMask,multichannel):
-    imagen = cv2.imread(pathImagen, 0)
+def denoiseInpaint(imagen,mask,multichannel):
     noisy = img_as_float(imagen)
     image_orig = noisy
-    mask = np.asarray(cv2.imread(pathMask,0))
 
     # Afecta a la imagen original en las regiones marcadas por la mascara
     # Se puede cambiar de acuerdo a lo que se necesite
