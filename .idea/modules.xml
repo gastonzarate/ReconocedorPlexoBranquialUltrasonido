@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$USER_HOME$/Documents/PrediccionNerviosUltrasonido/.idea/PrediccionNerviosUltrasonido.iml" filepath="$USER_HOME$/Documents/PrediccionNerviosUltrasonido/.idea/PrediccionNerviosUltrasonido.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/ReconocedorPlexoBranquialUltrasonido.iml" filepath="$PROJECT_DIR$/.idea/ReconocedorPlexoBranquialUltrasonido.iml" />
     </modules>
   </component>
 </project>
