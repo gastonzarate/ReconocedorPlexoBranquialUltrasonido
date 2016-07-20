@@ -18,7 +18,7 @@ ancho = 580
 alto = 420
 numImg = 1
 
-cascade = cv2.CascadeClassifier('cascade.xml')
+cascade = cv2.CascadeClassifier('cascade2.xml')
 for base, dirs, files in os.walk('test'):
     for name in files:
         if not 'mask' in name:
@@ -29,17 +29,17 @@ for base, dirs, files in os.walk('test'):
             img = cv2.Sobel(img, cv2.CV_8U, 1, 0, ksize=5)
             pa = cascade.detectMultiScale(
                 img,
-                scaleFactor=1.2,
-                minNeighbors=3,
+                scaleFactor=1.01,
+                minNeighbors=9,
                 minSize=(10, 10),
                 maxSize=(200, 200),
                 flags=0)
             archivo.write("%d," % numImg)
             for (x, y, w, h) in pa:
                 com = (x - 1) * ancho + y
-                fin = com + h
-                for i in range(com, fin):
-                    hasta = i + w
+                fin = ((x - 1) + w) * ancho + y
+                for i in range(com, fin, alto):
+                    hasta = i + h
                     archivo.write('%d %d ' % (i,hasta))
                 break
             archivo.write("\n")
