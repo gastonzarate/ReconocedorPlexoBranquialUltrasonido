@@ -40,7 +40,7 @@ for base, dirs, files in os.walk('test'):
                 fin = com + h
                 for i in range(com, fin):
                     hasta = i + w
-                    archivo.write('%d %d \n' % (i,hasta))
+                    archivo.write('%d %d ' % (i,hasta))
                 break
             archivo.write("\n")
             numImg = numImg + 1
