@@ -4,6 +4,7 @@ import re
 import ReducirRuido
 import numpy as np
 from skimage import io
+import shutil
 
 rutaCarpeta = "Entrenamiento"
 lista_img = [],[]
@@ -42,18 +43,24 @@ def listarImagenes():
     return lista_img
 
 def crearDirectorios():
+    op = "S"
     # Pregunta si existen los directorios o archivos para eliminarlos
     if os.path.exists(rutaCarpeta):
-        os.rmdir(rutaPos)
+        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Entrenamiento(S/n)")
+        if op =="S":
+            shutil.rmtree(rutaCarpeta, ignore_errors=True)
+    else:
+        os.makedirs(rutaCarpeta)
 
-    # Crea las carpetas
-    os.makedirs(rutaCarpeta)
-    os.makedirs(rutaPos)
-    os.makedirs(rutaNeg)
-    archivoP = open(archPos, 'w')
-    archivoP.close()
-    archivoN = open(archNeg, 'w')
-    archivoN.close()
+    if op =="S":
+        # Crea las carpetas
+        os.makedirs(rutaPos)
+        os.makedirs(rutaNeg)
+        archivoP = open(archPos, 'w')
+        archivoP.close()
+        archivoN = open(archNeg, 'w')
+        archivoN.close()
+
 
 def separarPosNeg():
     # Pregunta si existen los directorios o archivos para eliminarlos
@@ -71,7 +78,6 @@ def separarPosNeg():
         iPos = 1
 
         for mascara in lista[1]:
-            #mask = cv2.imread('train/'+mascara,0)
             mask = io.imread(rutaImg+mascara,as_grey=True)
             index = lista[1].index(mascara)
             item = lista[0].__getitem__(index)

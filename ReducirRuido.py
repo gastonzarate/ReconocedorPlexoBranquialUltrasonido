@@ -14,12 +14,12 @@ def denoiseDilate(imagen,iterations=1):
     return transformacion
 
 def denoiseMorfologico(imagen):
-    # Crear un kernel de '1' de 3x3
-    kernel = np.ones((3, 3), np.uint8)
+    # Crear un kernel de '1' de 5x5
+    kernel = np.ones((5, 5), np.uint8)
 
     # Se aplica la transformacion: Morphological Gradient
-    transformacion = cv2.morphologyEx(imagen, cv2.MORPH_OPEN, kernel) + cv2.morphologyEx(imagen, cv2.MORPH_CLOSE, kernel)
-
+    transformacion = cv2.morphologyEx(imagen, cv2.MORPH_CLOSE, kernel)
+    transformacion = cv2.morphologyEx(transformacion, cv2.MORPH_CLOSE, kernel)
     return transformacion
 
 def denoiseNonLocalMeans(imagen):
@@ -28,7 +28,7 @@ def denoiseNonLocalMeans(imagen):
     """
     noisy = img_as_float(imagen)
 
-    denoise = denoise_nl_means(noisy, 7, 9, 0.08)
+    denoise = denoise_nl_means(noisy, patch_size=3, patch_distance=7, h=0.09)
 
     return denoise
 
