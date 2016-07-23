@@ -18,7 +18,7 @@ def denoiseMorfologico(imagen):
     kernel = np.ones((5, 5), np.uint8)
 
     # Se aplica la transformacion: Morphological Gradient
-    transformacion = cv2.morphologyEx(imagen, cv2.MORPH_CLOSE, kernel)
+    transformacion = cv2.morphologyEx(imagen, cv2.MORPH_OPEN, kernel)
     transformacion = cv2.morphologyEx(transformacion, cv2.MORPH_CLOSE, kernel)
     return transformacion
 
