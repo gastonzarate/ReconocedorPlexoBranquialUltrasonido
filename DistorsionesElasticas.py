@@ -8,6 +8,8 @@ import os
 import re
 from skimage import img_as_ubyte,io
 
+id = "G"
+
 def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
     """Elastic deformation of images as described in [Simard2003]_ (with modifications).
     .. [Simard2003] Simard, Steinkraus and Platt, "Best Practices for
@@ -85,27 +87,25 @@ cv2.imshow('image',im_t)
 cv2.imshow('mask',im_mask_t)
 cv2.waitKey(0)
 """
-lista_img = [],[]
-rutaOrigen = os.path.join("DatosNormalizados","train/")
-rutaCarpeta = "ImagenesDistorsionadas/"
+lista_img = []
+rutaCarpeta = os.path.join("DatosNormalizados","Distorciones")
+rutaOrigen = os.path.join("DatosNormalizados","train")
+rutaPos = os.path.join("Datos","lista-pos.txt")
 
 def listarImagenes():
-    for base, dirs, files in os.walk(rutaOrigen):
-        files.sort(cmp=compara)
-        for name in files:
-            if 'mask' in name:
-                lista_img[1].append(name)
-            else:
-                lista_img[0].append(name)
+    archivo = open(rutaPos,"r")
+    for name in archivo.readlines():
+        lista_img.append(name)
     return lista_img
 
 def crearDirectorios():
     op = "S"
     # Pregunta si existen los directorios o archivos para eliminarlos
     if os.path.exists(rutaCarpeta):
-        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Entrenamiento(S/n)")
+        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Distorciones(S/n)")
         if op =="S":
             shutil.rmtree(rutaCarpeta, ignore_errors=True)
+            os.makedirs(rutaCarpeta)
     else:
         os.makedirs(rutaCarpeta)
 
@@ -113,30 +113,26 @@ def generarConjunto():
     #lista solo las imagenes positivas
     lista = listarImagenes()
     crearDirectorios()
-    for mascara in lista[1]:
-        im_mask = cv2.imread(rutaOrigen + mascara, 0)
-        index = lista[1].index(mascara)
-        item = lista[0].__getitem__(index)
-        im = cv2.imread(rutaOrigen + item,0)
+    for name in lista:
+        nomArch = name.split('.')[0]
+        mascara = nomArch + "_mask.png"
+        im_mask = cv2.imread(os.path.join(rutaOrigen,mascara), 0)
+        im = cv2.imread(os.path.join(rutaOrigen,nomArch+".png"),0)
 
-        nomArch = item.split('.')
-        i = 1
-        if im_mask.any() != 0:
-            #Genera 5 imagenes distorsionadas por cada imagen positiva
-            while i < 5:
-                #le aplica la misma distorsion a la imagen y a su correspondiente mascara
-                im_merge = np.concatenate((im[..., None], im_mask[..., None]), axis=2)
-                im_merge_t = elastic_transform(im_merge, im_merge.shape[1] * 2, im_merge.shape[1] * 0.08,
-                                            im_merge.shape[1] * 0.08)
-                #hace un split para reconstruir las dos imagenes
-                im_t = im_merge_t[..., 0]
-                im_mask_t = im_merge_t[..., 1]
-                cv2.imwrite(rutaCarpeta+item,im)
-                cv2.imwrite(rutaCarpeta+mascara, im_mask)
-                cv2.imwrite(rutaCarpeta+nomArch[0]+'_'+str(i)+'.png',im_t)
-                cv2.imwrite(rutaCarpeta+nomArch[0] +'_mask_' + str(i)+'.png', im_mask_t)
-                print 'Grabado im: '+nomArch[0]+'_'+str(i)+'.png'
-                print 'Grabado mask:'+nomArch[0] +'_mask_' + str(i)+'.png'
-                i+=1
+        #Genera 5 imagenes distorsionadas por cada imagen positiva
+        for i in range(1,6):
+            #le aplica la misma distorsion a la imagen y a su correspondiente mascara
+            im_merge = np.concatenate((im[..., None], im_mask[..., None]), axis=2)
+            im_merge_t = elastic_transform(im_merge, im_merge.shape[1] * 2, im_merge.shape[1] * 0.08,
+                                        im_merge.shape[1] * 0.08)
+            #hace un split para reconstruir las dos imagenes
+            im_t = im_merge_t[..., 0]
+            im_mask_t = im_merge_t[..., 1]
+            nomImg = nomArch+'_'+str(i)+'.png'
+            nomMask = nomArch+'_mask_' + id + str(i)+'.png'
+            cv2.imwrite(os.path.join(rutaCarpeta,nomImg),im_t)
+            cv2.imwrite(os.path.join(rutaCarpeta,nomMask), im_mask_t)
+            print 'Grabado im: '+nomImg
+            print 'Grabado mask:'+nomMask
 
 generarConjunto()
