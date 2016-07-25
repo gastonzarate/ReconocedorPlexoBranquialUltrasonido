@@ -1,6 +1,0 @@
-Crear Muestras
-opencv_createsamples.exe -vec bin_desc.vec -info pos.info -bg neg.info -num 1800
-Entrenar clasificador
-opencv_traincascade.exe -data cascade -vec bin_desc.vec -bg neg.info -numPos 150 -numNeg 3312 -numStages 50 -acceptanceRatioBreakValue (10e-4) -stageType BOOST -featureType HAAR -w 24 -h 24 -bt GAB -minhitrate 0.95 -maxfalsealarm 0.45 -weightTrimRate 0.95 -maxDepth 1 -mem 1300 -mode ALL
-
-opencv_traincascade.exe -data C:\OpenCV\build\x64\vc14\bin\cascade -vec C:\OpenCV\build\x64\vc14\bin\bin_desc.vec -bg C:\OpenCV\build\x64\vc14\bin\neg.info -numPos 100 -numNeg 3312 -numStages 40 -acceptanceRatioBreakValue (10e-3) -stageType BOOST -featureType HAAR -w 24 -h 24 -bt GAB -minhitrate 0.95 -maxfalsealarm 0.40 -weightTrimRate 0.95 -maxDepth 3 -mode ALL

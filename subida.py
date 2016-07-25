@@ -7,7 +7,7 @@ import re
 rutaCarpeta = "Subida"
 ruta = os.path.join(rutaCarpeta, "submission.csv")
 rutaImg = os.path.join("DatosNormalizados", "test")
-clasificador = os.path.join("Clasificadores",'cascade.xml')
+clasificador = os.path.join("Clasificadores",'cascade4.xml')
 ancho = 580
 alto = 420
 margen = 5
@@ -54,12 +54,15 @@ for base, dirs, files in os.walk(rutaImg):
             #Carga la imagen
             img = cv2.imread(os.path.join(base, name))
 
+            #Recorta la imagen
+            #img = img[60,50:460:320]
+
             #Detecta las imagenes
             pa = cascade.detectMultiScale(
                  img,
-                 scaleFactor=1.1,
+                 scaleFactor=1.05,
                  minNeighbors=9,
-                 minSize=(10, 10),
+                 minSize=(5, 5),
                  maxSize=(200, 200),
                  flags=0)
             #Guarda en el archivo su numero

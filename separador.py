@@ -1,7 +1,6 @@
 import os
 import cv2
 import re
-import ReducirRuido
 import numpy as np
 from skimage import io
 import shutil
@@ -74,14 +73,13 @@ def separarPosNeg():
         archivoN = open(archNeg, 'a')
 
         lista = listarImagenes()
-        iNeg = 1
-        iPos = 1
 
         for mascara in lista[1]:
-            mask = io.imread(rutaImg+mascara,as_grey=True)
+            mask = cv2.imread(os.path.join(rutaImg,mascara), cv2.IMREAD_GRAYSCALE)
+            #mask = io.imread(os.path.join(rutaImg,mascara),as_grey=True)
             index = lista[1].index(mascara)
             item = lista[0].__getitem__(index)
-            imagen = cv2.imread(rutaImg+item,cv2.IMREAD_GRAYSCALE)
+            imagen = cv2.imread(os.path.join(rutaImg,item),cv2.IMREAD_GRAYSCALE)
             nomArch = item.split('.')[0]
 
             if mask.any()!=0:
