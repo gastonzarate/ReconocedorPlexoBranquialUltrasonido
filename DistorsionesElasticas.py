@@ -1,11 +1,12 @@
 # Import stuff
 import numpy as np
-import pandas as pd
 import cv2
 from scipy.ndimage.interpolation import map_coordinates
 from scipy.ndimage.filters import gaussian_filter
-import matplotlib.pyplot as plt
-
+import shutil
+import os
+import re
+from skimage import img_as_ubyte,io
 
 def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
     """Elastic deformation of images as described in [Simard2003]_ (with modifications).
@@ -40,8 +41,6 @@ def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
 
     return map_coordinates(image, indices, order=1, mode='reflect').reshape(shape)
 
-
-
 # Define function to draw a grid
 def draw_grid(im, grid_size):
     # Draw grid lines
@@ -50,9 +49,25 @@ def draw_grid(im, grid_size):
     for j in range(0, im.shape[0], grid_size):
         cv2.line(im, (0, j), (im.shape[1], j), color=(255,))
 
+def compara(a, b):
+    numeros_a = map(int, re.findall("\d+", a))
+    numeros_b = map(int, re.findall("\d+", b))
+
+    if len(numeros_a) == 0:
+        return 1
+
+    if numeros_a < numeros_b:
+        retorno = -1
+    elif numeros_a == numeros_b:
+        retorno = 0
+    else:
+        retorno = 1
+
+    return retorno
+
 """
-im = cv2.imread("train/1_1.tif", -1)
-im_mask = cv2.imread("train/1_1_mask.tif", -1)
+im = cv2.imread("DatosNormalizados/train/1_1.png", 0)
+im_mask = cv2.imread("DatosNormalizados/train/1_1_mask.png", 0)
 
 # Draw grid lines
 draw_grid(im, 50)
@@ -70,3 +85,57 @@ cv2.imshow('image',im_t)
 cv2.imshow('mask',im_mask_t)
 cv2.waitKey(0)
 """
+lista_img = [],[]
+rutaOrigen = os.path.join("DatosNormalizados","train/")
+rutaCarpeta = "ImagenesDistorsionadas/"
+
+def listarImagenes():
+    for base, dirs, files in os.walk(rutaOrigen):
+        files.sort(cmp=compara)
+        for name in files:
+            if 'mask' in name:
+                lista_img[1].append(name)
+            else:
+                lista_img[0].append(name)
+    return lista_img
+
+def crearDirectorios():
+    op = "S"
+    # Pregunta si existen los directorios o archivos para eliminarlos
+    if os.path.exists(rutaCarpeta):
+        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Entrenamiento(S/n)")
+        if op =="S":
+            shutil.rmtree(rutaCarpeta, ignore_errors=True)
+    else:
+        os.makedirs(rutaCarpeta)
+
+def generarConjunto():
+    #lista solo las imagenes positivas
+    lista = listarImagenes()
+    crearDirectorios()
+    for mascara in lista[1]:
+        im_mask = cv2.imread(rutaOrigen + mascara, 0)
+        index = lista[1].index(mascara)
+        item = lista[0].__getitem__(index)
+        im = cv2.imread(rutaOrigen + item,0)
+
+        nomArch = item.split('.')
+        i = 0
+        if im_mask.any() != 0:
+            #Genera 5 imagenes distorsionadas por cada imagen positiva
+            while i < 5:
+                #le aplica la misma distorsion a la imagen y a su correspondiente mascara
+                im_merge = np.concatenate((im[..., None], im_mask[..., None]), axis=2)
+                im_merge_t = elastic_transform(im_merge, im_merge.shape[1] * 2, im_merge.shape[1] * 0.08,
+                                            im_merge.shape[1] * 0.08)
+                #hace un split para reconstruir las dos imagenes
+                im_t = im_merge_t[..., 0]
+                im_mask_t = im_merge_t[..., 1]
+
+                cv2.imwrite(rutaCarpeta+nomArch[0]+'_'+str(i)+'.png',im_t)
+                cv2.imwrite(rutaCarpeta+nomArch[0] + '_' + str(i) +'_mask.png', im_mask_t)
+                print 'Grabado im: '+nomArch[0]+'_'+str(i)+'.png'
+                print 'Grabado mask:'+nomArch[0] + '_' + str(i) +'_mask.png'
+                i+=1
+
+generarConjunto()
