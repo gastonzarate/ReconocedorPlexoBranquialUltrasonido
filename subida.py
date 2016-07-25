@@ -1,67 +1,81 @@
 import os
+import numpy as np
 import cv2
 import shutil
+import re
 
-rutaCarpeta = "subida"
+rutaCarpeta = "Subida"
 ruta = os.path.join(rutaCarpeta, "submission.csv")
 rutaImg = os.path.join("DatosNormalizados", "test")
-clasificador = os.path.join("Clasificadores",'cascade2.xml')
+clasificador = os.path.join("Clasificadores",'cascade.xml')
 ancho = 580
 alto = 420
 margen = 5
 
+def compara(a, b):
+    numeros_a = map(int, re.findall("\d+", a))
+    numeros_b = map(int, re.findall("\d+", b))
+
+    if len(numeros_a) == 0:
+        return 1
+
+    if numeros_a < numeros_b:
+        retorno = -1
+    elif numeros_a == numeros_b:
+        retorno = 0
+    else:
+        retorno = 1
+
+    return retorno
+
+
 # Si existe el directorio carpeta la elimina
 if os.path.exists(rutaCarpeta):
     shutil.rmtree(rutaCarpeta, ignore_errors=True)
-else:
-    os.makedirs(rutaCarpeta)
+os.makedirs(rutaCarpeta)
 # Crea el archivo de subida
 archivo = open(ruta, 'w')
 archivo.close()
 # Abre el archivo de subida
 archivo = open(ruta, 'a')
-archivo.write("img,pixels")
+archivo.write("img,pixels\n")
 
-numImg = 1
 
 #Carga el clasificador
 cascade = cv2.CascadeClassifier(clasificador)
 
 #Recorre las imagenes, las clasifica y guarda su solucion
 for base, dirs, files in os.walk(rutaImg):
+    files.sort(cmp=compara)
     for name in files:
         if not 'mask' in name:
-            print numImg
+            print name
 
-            #Carla la imagen
+            #Carga la imagen
             img = cv2.imread(os.path.join(base, name))
-
-            #cv2.imshow("imagen",img)
-            #cv2.waitKey(0)
 
             #Detecta las imagenes
             pa = cascade.detectMultiScale(
-                img,
-                scaleFactor=1.1,
-                minNeighbors=9,
-                minSize=(10, 10),
-                maxSize=(200, 200),
-                flags=0)
+                 img,
+                 scaleFactor=1.1,
+                 minNeighbors=9,
+                 minSize=(10, 10),
+                 maxSize=(200, 200),
+                 flags=0)
             #Guarda en el archivo su numero
-            archivo.write("%d," % numImg)
+            archivo.write(name.split('.')[0] + ",")
             #Guarda en el archivo la primera deteccion
             for (x, y, w, h) in pa:
-                x = x + margen
-                y = y + margen
-                h = h - margen*2
-                w = w - margen*2
-                com = (x - 1) * ancho + y
-                fin = ((x - 1) + w) * ancho + y
-                for i in range(com, fin, alto):
-                    archivo.write('%d %d ' % (i,h))
-                break
-            archivo.write(" \n")
-            numImg = numImg + 1
+                 x = x + margen
+                 y = y + margen
+                 h = h - margen*2
+                 w = w - margen*2
+                 com = (x - 1) * ancho + y
+                 fin = ((x - 1) + w) * ancho + y
+                 for i in range(com, fin, alto):
+                     archivo.write('%d %d ' % (i,h))
+                 break
+            archivo.write("\n")
 archivo.close()
 
 
