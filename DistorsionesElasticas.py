@@ -120,7 +120,7 @@ def generarConjunto():
         im = cv2.imread(rutaOrigen + item,0)
 
         nomArch = item.split('.')
-        i = 0
+        i = 1
         if im_mask.any() != 0:
             #Genera 5 imagenes distorsionadas por cada imagen positiva
             while i < 5:
@@ -131,11 +131,12 @@ def generarConjunto():
                 #hace un split para reconstruir las dos imagenes
                 im_t = im_merge_t[..., 0]
                 im_mask_t = im_merge_t[..., 1]
-
+                cv2.imwrite(rutaCarpeta+item,im)
+                cv2.imwrite(rutaCarpeta+mascara, im_mask)
                 cv2.imwrite(rutaCarpeta+nomArch[0]+'_'+str(i)+'.png',im_t)
-                cv2.imwrite(rutaCarpeta+nomArch[0] + '_' + str(i) +'_mask.png', im_mask_t)
+                cv2.imwrite(rutaCarpeta+nomArch[0] +'_mask_' + str(i)+'.png', im_mask_t)
                 print 'Grabado im: '+nomArch[0]+'_'+str(i)+'.png'
-                print 'Grabado mask:'+nomArch[0] + '_' + str(i) +'_mask.png'
+                print 'Grabado mask:'+nomArch[0] +'_mask_' + str(i)+'.png'
                 i+=1
 
 generarConjunto()
