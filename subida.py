@@ -2,31 +2,15 @@ import os
 import numpy as np
 import cv2
 import shutil
-import re
+import compara as c
 
 rutaCarpeta = "Subida"
 ruta = os.path.join(rutaCarpeta, "submission.csv")
 rutaImg = os.path.join("DatosNormalizados", "test")
-clasificador = os.path.join("Clasificadores",'cascade4.xml')
+clasificador = os.path.join("Clasificadores",'cascade5_lbp.xml')
 ancho = 580
 alto = 420
 margen = 5
-
-def compara(a, b):
-    numeros_a = map(int, re.findall("\d+", a))
-    numeros_b = map(int, re.findall("\d+", b))
-
-    if len(numeros_a) == 0:
-        return 1
-
-    if numeros_a < numeros_b:
-        retorno = -1
-    elif numeros_a == numeros_b:
-        retorno = 0
-    else:
-        retorno = 1
-
-    return retorno
 
 
 # Si existe el directorio carpeta la elimina
@@ -46,10 +30,9 @@ cascade = cv2.CascadeClassifier(clasificador)
 
 #Recorre las imagenes, las clasifica y guarda su solucion
 for base, dirs, files in os.walk(rutaImg):
-    files.sort(cmp=compara)
+    files.sort(cmp=c.compara)
     for name in files:
         if not 'mask' in name:
-            print name
 
             #Carga la imagen
             img = cv2.imread(os.path.join(base, name))
@@ -60,13 +43,14 @@ for base, dirs, files in os.walk(rutaImg):
             #Detecta las imagenes
             pa = cascade.detectMultiScale(
                  img,
-                 scaleFactor=1.05,
-                 minNeighbors=9,
+                 scaleFactor=1.01,
+                 minNeighbors=5,
                  minSize=(5, 5),
-                 maxSize=(200, 200),
-                 flags=0)
+                 maxSize=(300, 300),
+                 flags = 0)
             #Guarda en el archivo su numero
             archivo.write(name.split('.')[0] + ",")
+            bandera = False
             #Guarda en el archivo la primera deteccion
             for (x, y, w, h) in pa:
                  x = x + margen
@@ -77,7 +61,13 @@ for base, dirs, files in os.walk(rutaImg):
                  fin = ((x - 1) + w) * ancho + y
                  for i in range(com, fin, alto):
                      archivo.write('%d %d ' % (i,h))
+                 print name+":Detectado %d" %len(pa)
+                 bandera = True
                  break
+            if not bandera:
+                print name + ":No Detectado"
+                bandera=False
+
             archivo.write("\n")
 archivo.close()
 

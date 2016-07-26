@@ -5,6 +5,7 @@ import shutil
 from skimage import img_as_ubyte
 import re
 import time
+import compara as c
 
 rutaImgTrain = os.path.join("Datos","train")
 rutaImgTest = os.path.join("Datos","test")
@@ -12,25 +13,10 @@ rutaNorm = "DatosNormalizados"
 rutaNormTrain = os.path.join(rutaNorm,"train")
 rutaNormTest = os.path.join(rutaNorm,"test")
 
-def compara(a, b):
-    numeros_a = map(int, re.findall("\d+", a))
-    numeros_b = map(int, re.findall("\d+", b))
-
-    if len(numeros_a) == 0:
-        return 1
-
-    if numeros_a < numeros_b:
-        retorno = -1
-    elif numeros_a == numeros_b:
-        retorno = 0
-    else:
-        retorno = 1
-
-    return retorno
 
 def normalizarGuardar(rutaOrigen,rutaDestino):
     for base, dirs, files in os.walk(rutaOrigen):
-        files.sort(cmp=compara)
+        files.sort(cmp=c.compara)
         for name in files:
             print name
             img = cv2.imread(os.path.join(rutaOrigen, name))

@@ -4,6 +4,7 @@ import re
 import numpy as np
 from skimage import io
 import shutil
+import compara as c
 
 rutaCarpeta = "Entrenamiento"
 lista_img = [],[]
@@ -15,25 +16,10 @@ rutaImg = os.path.join("DatosNormalizados","train")
 #Margen a agregar a las imagenes ademas de la mascara
 margen = 5
 
-def compara(a, b):
-    numeros_a = map(int, re.findall("\d+", a))
-    numeros_b = map(int, re.findall("\d+", b))
-
-    if len(numeros_a) == 0:
-        return 1
-
-    if numeros_a < numeros_b:
-        retorno = -1
-    elif numeros_a == numeros_b:
-        retorno = 0
-    else:
-        retorno = 1
-
-    return retorno
 
 def listarImagenes():
     for base, dirs, files in os.walk(rutaImg):
-        files.sort(cmp=compara)
+        files.sort(cmp=c.compara)
         for name in files:
             if 'mask' in name:
                 lista_img[1].append(name)

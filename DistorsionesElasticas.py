@@ -8,7 +8,7 @@ import os
 import re
 from skimage import img_as_ubyte,io
 
-id = "G"
+id = "Z"
 
 def elastic_transform(image, alpha, sigma, alpha_affine, random_state=None):
     """Elastic deformation of images as described in [Simard2003]_ (with modifications).
@@ -51,21 +51,6 @@ def draw_grid(im, grid_size):
     for j in range(0, im.shape[0], grid_size):
         cv2.line(im, (0, j), (im.shape[1], j), color=(255,))
 
-def compara(a, b):
-    numeros_a = map(int, re.findall("\d+", a))
-    numeros_b = map(int, re.findall("\d+", b))
-
-    if len(numeros_a) == 0:
-        return 1
-
-    if numeros_a < numeros_b:
-        retorno = -1
-    elif numeros_a == numeros_b:
-        retorno = 0
-    else:
-        retorno = 1
-
-    return retorno
 
 """
 im = cv2.imread("DatosNormalizados/train/1_1.png", 0)
@@ -128,7 +113,7 @@ def generarConjunto():
             #hace un split para reconstruir las dos imagenes
             im_t = im_merge_t[..., 0]
             im_mask_t = im_merge_t[..., 1]
-            nomImg = nomArch+'_'+str(i)+'.png'
+            nomImg = nomArch+'_'+ id +str(i)+'.png'
             nomMask = nomArch+'_mask_' + id + str(i)+'.png'
             cv2.imwrite(os.path.join(rutaCarpeta,nomImg),im_t)
             cv2.imwrite(os.path.join(rutaCarpeta,nomMask), im_mask_t)
