@@ -18,6 +18,7 @@ def load_cv2_images(folder):
     paths = glob.glob(folder + '*.tif')
     paths = [p for p in paths if 'mask' not in p]
     c=0
+
     for p in paths:
         # Read in greyscale image and append to path
         index = int(p.split('/')[2].split('_')[0])

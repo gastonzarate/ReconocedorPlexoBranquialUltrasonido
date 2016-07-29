@@ -32,8 +32,10 @@ def crearDirectorios():
 
 
 def compararImagenes(a,b):
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3), (1, 1))
     img = cv2.subtract(a, b)
     img,thresh = cv2.threshold(img, 15, 255, cv2.THRESH_BINARY)
+    img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
     im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
     print len(contours)
     if(len(contours)==0):
