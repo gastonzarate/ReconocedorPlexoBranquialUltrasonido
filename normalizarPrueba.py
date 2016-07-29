@@ -5,6 +5,7 @@ from skimage import img_as_ubyte
 
 
 rutaOrigen = os.path.join("Datos","train")
+print os._exists(rutaOrigen)
 for base, dirs, files in os.walk(rutaOrigen):
     for name in files:
         img = cv2.imread(os.path.join(rutaOrigen, name))
@@ -28,6 +29,7 @@ for base, dirs, files in os.walk(rutaOrigen):
         cv2.imshow(nomArch + ":Morfologico", img)
         cv2.imshow(nomArch + ": Bordes", bordes)
         cv2.waitKey(0)
+        cv2.destroyAllWindows()
 
         img = ReducirRuido.denoiseNonLocalMeans(img)
         img = img_as_ubyte(img)
@@ -36,5 +38,6 @@ for base, dirs, files in os.walk(rutaOrigen):
         cv2.imshow(nomArch+" : NonLocalMeans", img)
         cv2.imshow(nomArch + ": Bordes", bordes)
         cv2.waitKey(0)
+        cv2.destroyAllWindows(0)
 
 

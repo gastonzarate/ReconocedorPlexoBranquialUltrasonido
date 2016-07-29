@@ -33,9 +33,10 @@ def normalizarGuardar(rutaOrigen,rutaDestino):
 if os.path.exists(rutaImgTrain) and os.path.exists(rutaImgTest):
     op = "S"
     if os.path.exists(rutaNorm):
-        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Entrenamiento(S/n)")
+        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta DatosNormalizados(S/n)")
         if op == "S":
-           shutil.rmtree(rutaNorm, ignore_errors=True)
+           shutil.rmtree(rutaNormTrain, ignore_errors=True)
+           shutil.rmtree(rutaNormTest, ignore_errors=True)
     else:
         os.makedirs(rutaNorm)
 
