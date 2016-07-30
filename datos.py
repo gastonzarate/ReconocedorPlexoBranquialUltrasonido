@@ -105,5 +105,46 @@ def preprocess(imgs):
         imgs_p[i, 0] = cv2.resize(imgs[i, 0], (im_columnas, im_filas), interpolation=cv2.INTER_CUBIC)
     return imgs_p
 
+def crear_datos_sd(marcadas):
+    train_data_path = os.path.join(datos_path, 'train')
+    imagenes = os.listdir(train_data_path)
+    imagenes.sort(cmp=c.compara)
+    total = len(imagenes) / 2 - len(marcadas)
+    total_marcadas = len(marcadas)
+
+    imgs = np.ndarray((total, 1, im_filas, im_columnas), dtype=np.uint8)
+    imgs_mask = np.ndarray((total, 1, im_filas, im_columnas), dtype=np.uint8)
+
+    i = 0
+    print('-' * 30)
+    print('Creando imagenes de entrenamiento...')
+    print('-' * 30)
+
+    for imagen in imagenes:
+        if marcadas.contains(i):
+            continue
+        else:
+            if 'mask' in imagen:
+                continue
+            nombre_mask = imagen.split('.')[0] + '_mask.tif'
+            img = cv2.imread(os.path.join(train_data_path, imagen), cv2.IMREAD_GRAYSCALE)
+            img_mask = cv2.imread(os.path.join(train_data_path, nombre_mask), cv2.IMREAD_GRAYSCALE)
+
+            img = np.array([img])
+            img_mask = np.array([img_mask])
+
+            imgs[i] = img
+            imgs_mask[i] = img_mask
+
+            if i % 100 == 0:
+                print('Hecho: {0}/{1} imagenes'.format(i, total))
+        i += 1
+    print('Carga finalizada.')
+
+    print('Guardando train sd en .npy')
+    np.save(destino_train_path+'imgs_train_sd.npy', imgs)
+    np.save(destino_train_path+'imgs_mask_train_sd.npy', imgs_mask)
+    print('Guardado de train sd en .npy finalizado.')
+
 
 

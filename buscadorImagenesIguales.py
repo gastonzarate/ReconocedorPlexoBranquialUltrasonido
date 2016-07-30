@@ -5,6 +5,8 @@ import re
 import ReducirRuido
 import compara as c
 import shutil
+import datos
+import numpy as np
 
 rutaPos = os.path.join("Datos","lista-pos.txt")
 rutaNeg = os.path.join("Datos","lista-neg.txt")
@@ -32,18 +34,56 @@ def crearDirectorios():
 
 
 def compararImagenes(a,b):
-    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (3, 3), (1, 1))
-    img = cv2.subtract(a, b)
-    img,thresh = cv2.threshold(img, 15, 255, cv2.THRESH_BINARY)
-    img = cv2.morphologyEx(img, cv2.MORPH_OPEN, kernel)
-    im2, contours, hierarchy = cv2.findContours(thresh,cv2.RETR_TREE,cv2.CHAIN_APPROX_SIMPLE)
-    print len(contours)
-    if(len(contours)==0):
+    threshold = 23000000
+    if np.abs(b - a).sum() < threshold:
         bandera = True
     else:
         bandera = False
     return bandera
 
+imgAna = 0
+imgEli = 0
+imgIgu = 0
+
+crearDirectorios()
+datos.set_paths('Datos/',rutaGuardar,rutaGuardar)
+print 'Cargando imagenes...'
+imgs_train, imgs_train_mask = datos.cargar_datos_entrenamiento()
+print 'Procesando imagenes...'
+imgs_train = datos.preprocess(imgs_train)
+imgs_train_mask = datos.preprocess(imgs_train_mask)
+
+lista_marcadas = []
+total = len(imgs_train)
+for i in range(imgs_train.shape[0]):
+    im1 = imgs_train[i][0]
+    print'Imagen: %d/%d'%(imgAna,total)
+    for j in range(imgs_train.shape[0]):
+        if i!=j:
+            im2 = imgs_train[j][0]
+            if compararImagenes(im1,im2):
+                print 'Coincidencia encontrada.'
+                imgIgu = imgIgu + 1
+                mask1 = imgs_train_mask[i][0].sum()
+                mask2 = imgs_train_mask[j][0].sum()
+                if mask1 >= mask2:
+                    lista_marcadas.append(j)
+                    print 'Marcada para eliminar: %d'%(j)
+                    imgEli = imgEli + 1
+                else:
+                    lista_marcadas.append(i)
+                    print 'Marcada para eliminar: %d'%(i)
+                    imgEli = imgEli + 1
+
+    imgAna = imgAna + 1
+    print "Analizadas:%d \n Iguales:%d \n Marcadas:%d\n" % (imgAna, imgIgu, imgEli)
+
+datos.crear_datos_sd(lista_marcadas)
+
+
+
+
+"""
 #Carga las imagenes en memoria
 imagenes = [], []
 dicPos = cargarDiccionario(rutaPos)
@@ -84,3 +124,4 @@ largo = len(imagenes[0])
 for i in range(largo):
     print i + " de " + largo
     cv2.imwrite(os.path.join(rutaGuardar,imagenes[1][i]),imagenes[0][i])
+"""
