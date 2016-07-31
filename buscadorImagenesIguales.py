@@ -56,27 +56,28 @@ imgs_train_mask = datos.preprocess(imgs_train_mask)
 lista_marcadas = []
 total = len(imgs_train)
 for i in range(imgs_train.shape[0]):
-    im1 = imgs_train[i][0]
-    print'Imagen: %d/%d'%(imgAna,total)
-    for j in range(imgs_train.shape[0]):
-        if i!=j:
-            im2 = imgs_train[j][0]
-            if compararImagenes(im1,im2):
-                print 'Coincidencia encontrada.'
-                imgIgu = imgIgu + 1
-                mask1 = imgs_train_mask[i][0].sum()
-                mask2 = imgs_train_mask[j][0].sum()
-                if mask1 >= mask2:
-                    lista_marcadas.append(j)
-                    print 'Marcada para eliminar: %d'%(j)
-                    imgEli = imgEli + 1
-                else:
-                    lista_marcadas.append(i)
-                    print 'Marcada para eliminar: %d'%(i)
-                    imgEli = imgEli + 1
-
+    if not(lista_marcadas.__contains__(i)):
+        im1 = imgs_train[i][0]
+        for j in range(imgs_train.shape[0]):
+            if i!=j and not(lista_marcadas.__contains__(j)):
+                im2 = imgs_train[j][0]
+                if compararImagenes(im1,im2):
+                    print 'Coincidencia encontrada.'
+                    imgIgu = imgIgu + 1
+                    sum_mask1 = imgs_train_mask[i][0].sum()
+                    sum_mask2 = imgs_train_mask[j][0].sum()
+                    if sum_mask1!=0 and sum_mask2!=0:
+                        print 'Las dos son positivas...'
+                    elif sum_mask1==0 and sum_mask2==0:
+                        print 'Las dos son negativas...'
+                    else:
+                        lista_marcadas.append(i)
+                        lista_marcadas.append(j)
+                        print 'Marcadas para eliminar: %d | %d'%(i,j)
+                        imgEli = imgEli + 1
     imgAna = imgAna + 1
-    print "Analizadas:%d \n Iguales:%d \n Marcadas:%d\n" % (imgAna, imgIgu, imgEli)
+    print "Analizadas:%d/%d \n Iguales:%d \n Marcadas:%d\n" % (imgAna,total, imgIgu, imgEli)
+    print lista_marcadas
 
 datos.crear_datos_sd(lista_marcadas)
 

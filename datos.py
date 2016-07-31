@@ -109,8 +109,9 @@ def crear_datos_sd(marcadas):
     train_data_path = os.path.join(datos_path, 'train')
     imagenes = os.listdir(train_data_path)
     imagenes.sort(cmp=c.compara)
-    total = len(imagenes) / 2 - len(marcadas)
     total_marcadas = len(marcadas)
+    total = len(imagenes) / 2 - total_marcadas
+
 
     imgs = np.ndarray((total, 1, im_filas, im_columnas), dtype=np.uint8)
     imgs_mask = np.ndarray((total, 1, im_filas, im_columnas), dtype=np.uint8)
@@ -121,9 +122,7 @@ def crear_datos_sd(marcadas):
     print('-' * 30)
 
     for imagen in imagenes:
-        if marcadas.contains(i):
-            continue
-        else:
+        if not(marcadas.__contains__(i)):
             if 'mask' in imagen:
                 continue
             nombre_mask = imagen.split('.')[0] + '_mask.tif'
