@@ -73,7 +73,7 @@ cv2.imshow('mask',im_mask_t)
 cv2.waitKey(0)
 """
 lista_img = []
-rutaCarpeta = os.path.join("DatosNormalizados","Distorciones")
+rutaCarpeta = os.path.join("DatosNormalizados","Distorsiones")
 rutaOrigen = os.path.join("DatosNormalizados","train")
 rutaPos = os.path.join("Datos","lista-pos.txt")
 
@@ -87,7 +87,7 @@ def crearDirectorios():
     op = "S"
     # Pregunta si existen los directorios o archivos para eliminarlos
     if os.path.exists(rutaCarpeta):
-        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Distorciones(S/n)")
+        op = raw_input("Esta seguro que desea eliminar el contenido de la carpeta Distorsiones(S/n)")
         if op =="S":
             shutil.rmtree(rutaCarpeta, ignore_errors=True)
             os.makedirs(rutaCarpeta)
